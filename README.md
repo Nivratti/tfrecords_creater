@@ -135,3 +135,6 @@ python create_tfrecords.py \
 ```
 
 If you do not want the images stored in the tfrecords, then you can exclude the `--store_images` argument.
+
+Credits:
+  https://github.com/visipedia/tfrecords
