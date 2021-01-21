@@ -51,7 +51,7 @@ def list_files(root_dir, mindepth = 1, maxdepth = float('inf'), filter_ext=[], r
             pass
     return file_paths
 
-def _get_folder_classes(dataset_dir, skip_hidden=True):
+def _get_folder_as_classes(dataset_dir, skip_hidden=True):
     """
     Returns a list of current folder subdir name as class names.
     Args:
@@ -75,7 +75,7 @@ def _get_folder_classes(dataset_dir, skip_hidden=True):
 
 def main():
     dataset_train_dir = "/media/nivratti/programming/python/projects/tfrecords_creater/dataset_sample/train"
-    classes = _get_folder_classes(dataset_train_dir)
+    classes = _get_folder_as_classes(dataset_train_dir)
     print(f"classes: {classes}")
     pass
 
