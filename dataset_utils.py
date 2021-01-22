@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 
 def list_files(root_dir, mindepth = 1, maxdepth = float('inf'), filter_ext=[], return_relative_path=False):
     """
@@ -51,7 +52,7 @@ def list_files(root_dir, mindepth = 1, maxdepth = float('inf'), filter_ext=[], r
             pass
     return file_paths
 
-def _get_folder_as_classes(dataset_dir, skip_hidden=True):
+def _get_folder_labels(dataset_dir, skip_hidden=True):
     """
     Returns a list of current folder subdir name as class names.
     Args:
@@ -79,10 +80,55 @@ def encode_labels_sklearn(lst_classnames):
     le.fit(lst_classnames) # le.fit(["dog", "cat"])
     return le
 
+def parse_dataset_structure(dataset_dir):
+    """
+    Getting dataset structure
+    Each dict represents an image and should have a structure that mimics the tfrecord structure.
+    """
+    labels = _get_folder_labels(dataset_dir) # classes
+    logger.info(f"Labels found: {labels}")
+
+    if len(labels) <= 1:
+        logger.error(
+            f"Length of labels(classes) must be atleast 2. Found labels: {labels}"
+        )
+        return
+
+    lst_data_dicts = [] # holds dataset structure
+    image_index = 0 # index number of image, increase after adding it in list
+    for idx, label_text in enumerate(labels):
+        class_folderpath = os.path.join(dataset_dir, label_text)
+
+        # list all image files of class folder
+        lst_imagefiles = list_files(
+            class_folderpath, 
+            return_relative_path=True
+        )
+
+        for imagefile in lst_imagefiles:
+            image_abs_path = os.path.join(class_folderpath, imagefile)
+            image_data = {
+                "filename" : image_abs_path, 
+                "id" : str(image_index),
+                "class" : {
+                    "label" : str(idx),
+                    "text": label_text # optional
+                }
+            }
+            lst_data_dicts.append(image_data)
+            # increase image index
+            image_index += 1
+
+    return lst_data_dicts
+
+
 def main():
-    dataset_train_dir = "/media/nivratti/programming/python/projects/tfrecords_creater/dataset_sample/train"
-    classes = _get_folder_as_classes(dataset_train_dir)
-    print(f"classes: {classes}")
+    dataset_train_dir = "dataset_sample/train"
+    # classes = _get_folder_labels(dataset_train_dir)
+    # print(f"classes: {classes}")
+
+    lst_data_dicts = parse_dataset_structure(dataset_dir=dataset_train_dir)
+    print(f"lst_data_dicts: {lst_data_dicts}")
     pass
 
 if __name__ == "__main__":
