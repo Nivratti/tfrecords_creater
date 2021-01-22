@@ -85,7 +85,7 @@ image_data = {
   "filename" : "/path/to/image_1.jpg", 
   "id" : "0",
   "class" : {
-    "label" : "1"
+    "label" : 1
   }
 }
 ```
