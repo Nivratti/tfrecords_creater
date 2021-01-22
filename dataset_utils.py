@@ -80,9 +80,9 @@ def encode_labels_sklearn(lst_classnames):
     le.fit(lst_classnames) # le.fit(["dog", "cat"])
     return le
 
-def parse_dataset_structure(dataset_dir):
+def parse_dataset_mimic_final_structure(dataset_dir):
     """
-    Getting dataset structure
+    Iterate dataset and build structure for tfrecords
     Each dict represents an image and should have a structure that mimics the tfrecord structure.
     """
     labels = _get_folder_labels(dataset_dir) # classes
@@ -127,7 +127,7 @@ def main():
     # classes = _get_folder_labels(dataset_train_dir)
     # print(f"classes: {classes}")
 
-    lst_data_dicts = parse_dataset_structure(dataset_dir=dataset_train_dir)
+    lst_data_dicts = parse_dataset_mimic_final_structure(dataset_dir=dataset_train_dir)
     print(f"lst_data_dicts: {lst_data_dicts}")
     pass
 
