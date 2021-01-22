@@ -73,6 +73,12 @@ def _get_folder_as_classes(dataset_dir, skip_hidden=True):
 
     return sorted(class_names)
 
+def encode_labels_sklearn(lst_classnames):
+    from sklearn import preprocessing
+    le = preprocessing.LabelEncoder()
+    le.fit(lst_classnames) # le.fit(["dog", "cat"])
+    return le
+
 def main():
     dataset_train_dir = "/media/nivratti/programming/python/projects/tfrecords_creater/dataset_sample/train"
     classes = _get_folder_as_classes(dataset_train_dir)
