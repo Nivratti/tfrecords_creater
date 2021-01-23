@@ -81,7 +81,7 @@ def encode_labels_sklearn(lst_classnames):
     le.fit(lst_classnames) # le.fit(["dog", "cat"])
     return le
 
-def parse_dataset_mimic_final_structure(dataset_dir, store_json=False, json_filepath=None):
+def parse_dataset_mimic_final_structure(dataset_dir, store_mimicked_structure_json=False, mimicked_json_filepath=None):
     """
     Iterate dataset and build structure for tfrecords
     Each dict represents an image and should have a structure that mimics the tfrecord structure.
@@ -120,11 +120,11 @@ def parse_dataset_mimic_final_structure(dataset_dir, store_json=False, json_file
             # increase image index
             image_index += 1
 
-    if store_json:
-        if not json_filepath:
-            json_filepath = os.path.join(dataset_dir, "mimiced_structure.json")
+    if store_mimicked_structure_json:
+        if not mimicked_json_filepath:
+            mimicked_json_filepath = os.path.join(dataset_dir, "mimicked_structure.json")
 
-        with open(json_filepath, 'w') as fout:
+        with open(mimicked_json_filepath, 'w') as fout:
             json.dump(lst_data_dicts , fout)
 
     return lst_data_dicts

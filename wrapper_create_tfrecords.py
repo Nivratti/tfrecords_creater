@@ -1,18 +1,25 @@
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+import os
+import sys
+import argparse
+
+import numpy as np
+import tensorflow as tf
 
 from create_tfrecords import create
 from dataset_utils import parse_dataset_mimic_final_structure
 
 def generate_tfrecords(
     dataset_dir, dataset_name="train", output_directory="./tfrecords_train",
-    num_shards=10, num_threads=5,store_images=True):
+    num_shards=10, num_threads=5, shuffle=False, store_images=True,
+    store_mimicked_structure_json=True,
+    mimicked_json_filepath=None
+    ):
     # this should be your array of image data dictionaries. 
     dataset = parse_dataset_mimic_final_structure(
         dataset_dir,
-        store_json=True
+        store_mimicked_structure_json=True,
+        mimicked_json_filepath=output_directory
     )
-
 
     failed_images = create(
         dataset=dataset,
@@ -20,17 +27,78 @@ def generate_tfrecords(
         output_directory=output_directory,
         num_shards=num_shards,
         num_threads=num_threads,
+        shuffle=shuffle,
         store_images=store_images
     )
     return failed_images
 
 
-def main():
-    dataset_train_dir = "dataset_sample/train"
+def parse_args():
 
-    failed_images = generate_tfrecords(dataset_train_dir)
-    print(f"failed_images: {failed_images}")
-    pass
+    parser = argparse.ArgumentParser(description='Wrapper arround tfrecord creater')
+
+    parser.add_argument('--dataset_path', dest='dataset_path',
+                        help='Path to the dataset json file.', type=str,
+                        required=True)
+
+    parser.add_argument('--prefix', dest='dataset_name',
+                        help='Prefix for the tfrecords (e.g. `train`, `test`, `val`).', type=str,
+                        required=True)
+
+    parser.add_argument('--output_dir', dest='output_dir',
+                        help='Directory for the tfrecords.', type=str,
+                        required=True)
+
+    parser.add_argument('--shards', dest='num_shards',
+                        help='Number of shards to make.', type=int,
+                        required=True)
+
+    parser.add_argument('--threads', dest='num_threads',
+                        help='Number of threads to make.', type=int,
+                        required=True)
+
+    parser.add_argument('--shuffle', dest='shuffle',
+                        help='Shuffle the records before saving them.',
+                        required=False, action='store_true', default=False)
+
+    parser.add_argument('--store_images', dest='store_images',
+                        help='Store the images in the tfrecords.',
+                        required=False, action='store_true', default=False)
+
+    parser.add_argument('--store_mimicked_structure_json', dest='store_mimicked_structure_json',
+                        help='Store parsed dataset structure(mimicked tfrecords structure).',
+                        required=False, action='store_true', default=False)
+
+    parser.add_argument('--mimicked_json_filepath', dest='mimicked_json_filepath',
+                        help='Filename to store -- parsed dataset structure(mimicked tfrecords structure).', type=str,
+                        required=False)
+
+    parsed_args = parser.parse_args()
+
+    return parsed_args
+
+
+def main():
+    # dataset_train_dir = "dataset_sample/train"
+
+    # failed_images = generate_tfrecords(dataset_train_dir)
+    # print(f"failed_images: {failed_images}")
+    # pass
+
+    args = parse_args()
+
+    errors = generate_tfrecords(
+        dataset_dir=args.dataset_path,
+        dataset_name=args.dataset_name, 
+        output_directory=args.output_dir,
+        num_shards=args.num_shards, 
+        num_threads=args.num_threads, 
+        shuffle=args.shuffle, 
+        store_images=args.store_images,
+        store_mimicked_structure_json=args.store_mimicked_structure_json,
+        mimicked_json_filepath=args.mimicked_json_filepath
+    )
+    return errors
 
 if __name__ == "__main__":
     main()
