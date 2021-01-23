@@ -263,8 +263,14 @@ def _process_image_files_batch(coder, thread_index, ranges, name, output_directo
     error_counter = 0
     for s in range(num_shards_per_batch):
         # Generate a sharded version of the file name, e.g. 'train-00002-of-00010'
-        shard = thread_index * num_shards_per_batch + s
-        output_filename = '%s-%.5d-of-%.5d' % (name, shard, num_shards)
+        shard = thread_index * num_shards_per_batch + s  
+        # output_filename = '%s-%.5d-of-%.5d' % (name, shard, num_shards)
+
+        # write count in tfrecord filename -- tfrecords don't store metadata info - 
+        # so its better to store count in filname - 
+        # it will avoid iterating whole dataset to counting records
+        output_filename = '%s-%.2d-of-%.2d-cnt-.tfrec' % (name, shard, num_shards)
+        
         output_file = os.path.join(output_directory, output_filename)
         writer = tf.io.TFRecordWriter(output_file)
 
