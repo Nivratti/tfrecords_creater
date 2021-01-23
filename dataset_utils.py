@@ -110,9 +110,9 @@ def parse_dataset_mimic_final_structure(dataset_dir, store_mimicked_structure_js
             image_abs_path = os.path.join(class_folderpath, imagefile)
             image_data = {
                 "filename" : image_abs_path, 
-                "id" : str(image_index),
+                "id" : image_index,
                 "class" : {
-                    "label" : str(idx),
+                    "label" : idx,
                     "text": label_text # optional
                 }
             }
@@ -137,7 +137,7 @@ def main():
 
     lst_data_dicts = parse_dataset_mimic_final_structure(
         dataset_dir=dataset_train_dir,
-        store_json=True
+        store_mimicked_structure_json=True
     )
     print(f"lst_data_dicts: {lst_data_dicts}")
     pass
