@@ -169,15 +169,15 @@ class ImageCoder(object):
 
     def __init__(self):
         # Create a single Session to run all image coding calls.
-        self._sess = tf.Session()
+        self._sess = tf.compat.v1.Session()
 
         # Initializes function that converts PNG to JPEG data.
-        self._png_data = tf.placeholder(dtype=tf.string)
+        self._png_data = tf.compat.v1.placeholder(dtype=tf.string)
         image = tf.image.decode_png(self._png_data, channels=3)
         self._png_to_jpeg = tf.image.encode_jpeg(image, format='rgb', quality=100)
 
         # Initializes function that decodes RGB JPEG data.
-        self._decode_jpeg_data = tf.placeholder(dtype=tf.string)
+        self._decode_jpeg_data = tf.compat.v1.placeholder(dtype=tf.string)
         self._decode_jpeg = tf.image.decode_jpeg(self._decode_jpeg_data, channels=3)
 
     def png_to_jpeg(self, image_data):
@@ -214,7 +214,7 @@ def _process_image(filename, coder):
       width: integer, image width in pixels.
     """
     # Read the image file.
-    image_data = tf.gfile.FastGFile(filename, 'rb').read()
+    image_data = tf.io.gfile.GFile(filename, 'rb').read()  # tf.gfile.FastGFile
 
     # Clean the dirty data.
     if _is_png(filename):
@@ -266,7 +266,7 @@ def _process_image_files_batch(coder, thread_index, ranges, name, output_directo
         shard = thread_index * num_shards_per_batch + s
         output_filename = '%s-%.5d-of-%.5d' % (name, shard, num_shards)
         output_file = os.path.join(output_directory, output_filename)
-        writer = tf.python_io.TFRecordWriter(output_file)
+        writer = tf.io.TFRecordWriter(output_file)
 
         shard_counter = 0
         files_in_shard = np.arange(shard_ranges[s], shard_ranges[s + 1], dtype=int)
