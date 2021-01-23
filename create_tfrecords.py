@@ -26,6 +26,8 @@ from datetime import datetime
 import hashlib
 import json
 import os
+import pathlib
+
 from queue import Queue
 import random
 import sys
@@ -270,7 +272,7 @@ def _process_image_files_batch(coder, thread_index, ranges, name, output_directo
         # so its better to store count in filname - 
         # it will avoid iterating whole dataset to counting records
         output_filename = '%s-%.2d-of-%.2d-cnt-.tfrec' % (name, shard, num_shards)
-        
+
         output_file = os.path.join(output_directory, output_filename)
         writer = tf.io.TFRecordWriter(output_file)
 
@@ -321,8 +323,19 @@ def _process_image_files_batch(coder, thread_index, ranges, name, output_directo
                       (datetime.now(), thread_index, counter, num_files_in_thread, error_counter))
                 sys.stdout.flush()
 
+        # add total image count in tfrecord filename
+        # it will avoid iterating dataset to get count
+        path = pathlib.Path(output_file)
+        old_name = path.stem
+        old_extension = path.suffix
+        directory = path.parent
+        new_name = old_name + str(shard_counter)  + old_extension
+        new_output_file = pathlib.Path(directory, new_name)
+        path.rename(new_output_file) # rename file on disk
+
         print('%s [thread %d]: Wrote %d images to %s, with %d errors.' %
-              (datetime.now(), thread_index, shard_counter, output_file, error_counter))
+              (datetime.now(), thread_index, shard_counter, new_output_file, error_counter))
+        
         sys.stdout.flush()
         shard_counter = 0
 
