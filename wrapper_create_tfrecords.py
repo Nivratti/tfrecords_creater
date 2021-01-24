@@ -114,7 +114,12 @@ def main():
         store_mimicked_structure_json=args.store_mimicked_structure_json,
         mimicked_json_filepath=args.mimicked_json_filepath
     )
-    return errors
+    
+    if errors:
+        print("%d images failed." % (len(failed_images),))
+        for image_data in failed_images:
+            print("Image %s: %s" % (image_data['id'], image_data['error_msg']))
+    return
 
 if __name__ == "__main__":
     main()
