@@ -67,7 +67,7 @@ def parse_args():
 
     parser.add_argument('--shuffle', dest='shuffle',
                         help='Shuffle the records before saving them.',
-                        required=False, action='store_true', default=False)
+                        required=False, action='store_true', default=True)
 
     parser.add_argument('--store_images', dest='store_images',
                         help='Store the images in the tfrecords.',
@@ -90,7 +90,7 @@ def main():
     """
     Usage:
 
-    python wrapper_create_tfrecords.py --dataset_path="dataset_sample/train" --prefix="train" --output_dir="./out/sample_tfrecords" --shards=8 --threads=4 --store_images
+    python wrapper_create_tfrecords.py --dataset_path="dataset_sample/train" --prefix="train" --output_dir="./out/sample_tfrecords" --shards=8 --threads=4 --shuffle --store_images
 
     Returns:
         list: list of failed images
