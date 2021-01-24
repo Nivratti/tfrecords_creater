@@ -22,7 +22,7 @@ def list_files(root_dir, mindepth = 1, maxdepth = float('inf'), filter_ext=[], r
                set mindepth = 2 and maxdepth = 2. If you only want the files
                of the root dir itself, set mindepth = 1 and maxdepth = 1
     
-    filter_ext(list, optional) :  filter files ex. [.jpg, .png]
+    filter_ext(list, optional) :  filter files ex. [".jpg", ".jpeg", ".png"]
     return_relative_path(bool): Default false. If true return relative path else return absolute path
     """
     root_dir = os.path.normcase(root_dir)
@@ -91,7 +91,7 @@ def parse_dataset_mimic_final_structure(dataset_dir, store_mimicked_structure_js
 
     if len(labels) <= 1:
         logger.error(
-            f"Length of labels(classes) must be atleast 2. Found labels: {labels}"
+            f"Length of labels(classes) must be at-least 2. Found labels: {labels}"
         )
         return
 
@@ -103,8 +103,11 @@ def parse_dataset_mimic_final_structure(dataset_dir, store_mimicked_structure_js
         # list all image files of class folder
         lst_imagefiles = list_files(
             class_folderpath, 
+            filter_ext=[".jpg", ".jpeg", ".png"],
             return_relative_path=True
         )
+
+        logger.info(f"Total {len(lst_imagefiles)} images found in {class_folderpath}")
 
         for imagefile in lst_imagefiles:
             image_abs_path = os.path.join(class_folderpath, imagefile)
