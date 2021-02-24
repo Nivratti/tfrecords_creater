@@ -12,7 +12,7 @@ from dataset_utils import parse_dataset_mimic_final_structure
 def generate_tfrecords(
     dataset_dir, dataset_name="train", output_directory="./tfrecords_train",
     num_shards=10, num_threads=5, shuffle=False, store_images=True,
-    explicit_labels=[], store_mimicked_structure_json=True,
+    explicit_labels=set(), store_mimicked_structure_json=True,
     mimicked_json_filepath=None
     ):
     if mimicked_json_filepath is None:
@@ -74,9 +74,10 @@ def parse_args():
                         help='Store the images in the tfrecords.',
                         required=False, action='store_true', default=True)
 
+    # set() instead of list -- set will preserve element order
     parser.add_argument('--explicit_labels', nargs="+", dest='explicit_labels',
                         help='Labels(classes) of dataset. You can set your own class order.',
-                        required=False, action='store_true', default=[])
+                        required=False, default=set())
 
     parser.add_argument('--store_mimicked_structure_json', dest='store_mimicked_structure_json',
                         help='Store parsed dataset structure(mimicked tfrecords structure).',

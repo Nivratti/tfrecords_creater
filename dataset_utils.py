@@ -81,14 +81,11 @@ def encode_labels_sklearn(lst_classnames):
     le.fit(lst_classnames) # le.fit(["dog", "cat"])
     return le
 
-def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=[], store_mimicked_structure_json=False, mimicked_json_filepath=None):
+def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=set(), store_mimicked_structure_json=False, mimicked_json_filepath=None):
     """
     Iterate dataset and build structure for tfrecords
     Each dict represents an image and should have a structure that mimics the tfrecord structure.
     """
-    ## remove duplicates if any -- convert to set
-    explicit_labels = set(explicit_labels)
-        
     if explicit_labels:
         logger.info(f"Explicit labels: {explicit_labels}")
 
@@ -111,14 +108,16 @@ def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=[], store_m
             logger.error(f"Explicit labels(Labels provided by you) are more than actual detected labels.")
             extra_elements = list(set(explicit_labels) - set(detected_labels))
             logger.info(f"extra elements that you passed: {extra_elements}")
-            sys.exit("Pass proper labels. Exiting now...")
+            sys.exit("Please Pass proper labels. Exiting now...")
         else:
             extra_elements = list(set(detected_labels) - set(explicit_labels))
             logger.warning(f"You have passed less labels than actual labels count.")
-            logger.info(f"extra actual list labels(you hve not passed) : {extra_elements}")
+            logger.warning(f"extra actual list labels(you hve not passed) : {extra_elements}")
             labels = explicit_labels
     else:
         labels = detected_labels
+
+    logger.info(f"final Labels order: {labels}\n")
 
     lst_data_dicts = [] # holds dataset structure
     image_index = 0 # index number of image, increase after adding it in list
