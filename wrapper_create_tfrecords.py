@@ -5,8 +5,12 @@ import argparse
 import numpy as np
 import tensorflow as tf
 
-from create_tfrecords import create
-from dataset_utils import parse_dataset_mimic_final_structure
+try:
+  from create_tfrecords import create
+  from dataset_utils import parse_dataset_mimic_final_structure
+except:
+  from tfrecords_creater.create_tfrecords import create
+  from tfrecords_creater.dataset_utils import parse_dataset_mimic_final_structure
 
 
 def generate_tfrecords(
