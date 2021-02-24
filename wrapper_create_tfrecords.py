@@ -12,7 +12,7 @@ from dataset_utils import parse_dataset_mimic_final_structure
 def generate_tfrecords(
     dataset_dir, dataset_name="train", output_directory="./tfrecords_train",
     num_shards=10, num_threads=5, shuffle=False, store_images=True,
-    store_mimicked_structure_json=True,
+    explicit_labels=[], store_mimicked_structure_json=True,
     mimicked_json_filepath=None
     ):
     if mimicked_json_filepath is None:
@@ -25,6 +25,7 @@ def generate_tfrecords(
     # this should be your array of image data dictionaries. 
     dataset = parse_dataset_mimic_final_structure(
         dataset_dir,
+        explicit_labels=explicit_labels,
         store_mimicked_structure_json=store_mimicked_structure_json,
         mimicked_json_filepath=mimicked_json_filepath
     )
@@ -73,6 +74,10 @@ def parse_args():
                         help='Store the images in the tfrecords.',
                         required=False, action='store_true', default=True)
 
+    parser.add_argument('--explicit_labels', nargs="+", dest='explicit_labels',
+                        help='Labels(classes) of dataset. You can set your own class order.',
+                        required=False, action='store_true', default=[])
+
     parser.add_argument('--store_mimicked_structure_json', dest='store_mimicked_structure_json',
                         help='Store parsed dataset structure(mimicked tfrecords structure).',
                         required=False, action='store_true', default=True)
@@ -90,7 +95,11 @@ def main():
     """
     Usage:
 
-    python wrapper_create_tfrecords.py --dataset_path="dataset_sample/train" --prefix="train" --output_dir="./out/sample_tfrecords" --shards=8 --threads=4 --shuffle --store_images
+    python wrapper_create_tfrecords.py --dataset_path="dataset_sample/train" \
+        --prefix="train" \
+        --output_dir="./out/sample_tfrecords" \
+        --shards=8 --threads=4 --shuffle --store_images \
+        --explicit_labels "live" "spoof"
 
     Returns:
         list: list of failed images
@@ -111,6 +120,7 @@ def main():
         num_threads=args.num_threads, 
         shuffle=args.shuffle, 
         store_images=args.store_images,
+        explicit_labels=args.explicit_labels,
         store_mimicked_structure_json=args.store_mimicked_structure_json,
         mimicked_json_filepath=args.mimicked_json_filepath
     )
