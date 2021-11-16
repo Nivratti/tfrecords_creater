@@ -133,9 +133,9 @@ def parse_dataset_mimic_final_structure(
         
         try:
             from rich import print as print_rich
-            print_rich("Labels mapping to int: ", show_labels_int_mapping)
+            print_rich("Labels mapping to int: ", labels_int_mapping)
         except Exception as e:
-            print("Labels mapping to int: ", show_labels_int_mapping)
+            print("Labels mapping to int: ", labels_int_mapping)
 
     lst_data_dicts = [] # holds dataset structure
     image_index = 0 # index number of image, increase after adding it in list
