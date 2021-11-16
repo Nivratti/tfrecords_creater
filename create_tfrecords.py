@@ -35,6 +35,7 @@ import threading
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 
 def _int64_feature(value):
     """Wrapper for inserting int64 features into Example proto."""
