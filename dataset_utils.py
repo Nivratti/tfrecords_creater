@@ -81,7 +81,10 @@ def encode_labels_sklearn(lst_classnames):
     le.fit(lst_classnames) # le.fit(["dog", "cat"])
     return le
 
-def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=set(), store_mimicked_structure_json=False, mimicked_json_filepath=None):
+def parse_dataset_mimic_final_structure(
+    dataset_dir, explicit_labels=set(), store_mimicked_structure_json=False, mimicked_json_filepath=None,
+    silent_on_extra_explicit_labels=False, show_labels_int_mapping=True,
+    ):
     """
     Iterate dataset and build structure for tfrecords
     Each dict represents an image and should have a structure that mimics the tfrecord structure.
@@ -108,7 +111,9 @@ def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=set(), stor
             logger.error(f"Explicit labels(Labels provided by you) are more than actual detected labels.")
             extra_elements = list(set(explicit_labels) - set(detected_labels))
             logger.info(f"extra elements that you passed: {extra_elements}")
-            sys.exit("Please Pass proper labels. Exiting now...")
+
+            if not silent_on_extra_explicit_labels:
+                sys.exit("Please Pass proper labels. Exiting now...")
         else:
             extra_elements = list(set(detected_labels) - set(explicit_labels))
             logger.warning(f"You have passed less labels than actual labels count.")
@@ -118,6 +123,17 @@ def parse_dataset_mimic_final_structure(dataset_dir, explicit_labels=set(), stor
         labels = detected_labels
 
     logger.info(f"final Labels order: {labels}\n")
+
+    if show_labels_int_mapping:
+        labels_int_mapping = {}
+        for idx, label_text in enumerate(labels):
+            labels_int_mapping[label_text] = idx
+        
+        try:
+            from rich import print as print_rich
+            print_rich("Labels mapping to int: ", show_labels_int_mapping)
+        except Exception as e:
+            print("Labels mapping to int: ", show_labels_int_mapping)
 
     lst_data_dicts = [] # holds dataset structure
     image_index = 0 # index number of image, increase after adding it in list
