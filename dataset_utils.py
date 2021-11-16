@@ -114,6 +114,8 @@ def parse_dataset_mimic_final_structure(
 
             if not silent_on_extra_explicit_labels:
                 sys.exit("Please Pass proper labels. Exiting now...")
+            
+            labels = explicit_labels
         else:
             extra_elements = list(set(detected_labels) - set(explicit_labels))
             logger.warning(f"You have passed less labels than actual labels count.")
