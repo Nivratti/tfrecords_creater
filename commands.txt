@@ -1,0 +1,38 @@
+
+python wrapper_create_tfrecords.py --dataset_path "../TextRecognitionDataGenerator/out/sample_en_all_fonts_10_per_font/" --prefix "train" --output_dir "./out/tfrecords_sample_en_all_fonts_10_per_font" --threads 1 --shards 1
+
+python wrapper_create_tfrecords.py --dataset_path "../TextRecognitionDataGenerator/out/en_all_fonts_1k_per_font/" --prefix "train" --output_dir "./out/tfrecords_en_all_fonts_1k_per_font" --threads 12 --shards 12
+
+----------------------------------------------------------
+50k -- v1 conversion --training data
+
+python wrapper_create_tfrecords.py --dataset_path "../TextRecognitionDataGenerator/out/en_all_fonts_50k_per_font/" --prefix "train" --output_dir "./out/tfrecords_en_all_fonts_50k_per_font" --threads 12 --shards 240
+
+-------------------------------------------------------------
+Validation set data -- 6k random text taken from 450k dict and rendered it
+python wrapper_create_tfrecords.py --dataset_path "../TextRecognitionDataGenerator/out/en_all_fonts_6k_per_font-random-from-en-dict/" --prefix "val" --output_dir "./out/tfrecords_en_all_fonts_6k_per_font-random-from-en-dict-validation" --threads 12 --shards 24
+
+================================================================
+Uploading data to cloud:
+
+sudo snap install google-cloud-cli --classic
+gcloud auth login
+gcloud config set project 'cellular-virtue-375304'
+
+----
+# sample
+gsutil -m cp -r "out/tfrecords_sample_en_all_fonts_10_per_font" "gs://font_recognition/tfrecords_sample_en_all_fonts_10_per_font"
+
+# validation
+gsutil -m cp -r "out/tfrecords_en_all_fonts_6k_per_font-random-from-en-dict-validation" "gs://font_recognition/tfrecords_en_all_fonts_6k_per_font-random-from-en-dict-validation"
+
+# train
+gsutil -m cp -r "out/tfrecords_en_all_fonts_50k_per_font" "gs://font_recognition/tfrecords_en_all_fonts_50k_per_font"
+
+#####################################################################################
+####################################################################################
+language classification solution data
+###
+python wrapper_create_tfrecords.py --dataset_path "../TextRecognitionDataGenerator/out/language_classification-v1/" --prefix "train" --output_dir "./out/tfrecords_language_classification-v1" --explicit_labels "en" "ar" "hi" --threads 12 --shards 12 
+
+gsutil -m cp -r "out/tfrecords_language_classification-v1" "gs://language_classification/tfrecords_language_classification-v1"
