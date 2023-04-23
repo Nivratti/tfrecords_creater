@@ -82,8 +82,10 @@ def encode_labels_sklearn(lst_classnames):
     return le
 
 def parse_dataset_mimic_final_structure(
-    dataset_dir, explicit_labels=set(), store_mimicked_structure_json=False, mimicked_json_filepath=None,
-    silent_on_extra_explicit_labels=False, show_labels_int_mapping=True,
+        dataset_dir, explicit_labels=set(), 
+        store_mimicked_structure_json=False, mimicked_json_filepath=None,
+        silent_on_extra_explicit_labels=False, show_labels_int_mapping=True,
+        save_labels=True, labels_out_filepath=None,
     ):
     """
     Iterate dataset and build structure for tfrecords
@@ -94,6 +96,11 @@ def parse_dataset_mimic_final_structure(
 
     detected_labels = _get_folder_labels(dataset_dir) # classes
     detected_labels = set(detected_labels)
+
+    # short folder names
+    from natsort import natsorted
+    detected_labels = natsorted(detected_labels, reverse=False)
+
     logger.info(f"detected_labels: {detected_labels}")
 
     if len(detected_labels) <= 1:
@@ -125,6 +132,13 @@ def parse_dataset_mimic_final_structure(
         labels = detected_labels
 
     logger.info(f"final Labels order: {labels}\n")
+
+    if save_labels:
+        if not labels_out_filepath:
+            labels_out_filepath = os.path.join(dataset_dir, "labels.txt")
+
+        with open(labels_out_filepath, 'w') as fout:
+            fout.write('\n'.join(labels))
 
     if show_labels_int_mapping:
         labels_int_mapping = {}

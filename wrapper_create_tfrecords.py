@@ -12,16 +12,22 @@ except:
   from tfrecords_creater.create_tfrecords import create
   from tfrecords_creater.dataset_utils import parse_dataset_mimic_final_structure
 
-
+ 
 def generate_tfrecords(
-    dataset_dir, dataset_name="train", output_directory="./tfrecords_train",
-    num_shards=10, num_threads=5, shuffle=False, store_images=True,
-    explicit_labels=set(), store_mimicked_structure_json=True,
-    mimicked_json_filepath=None, silent_on_extra_explicit_labels=False
+        dataset_dir, dataset_name="train", output_directory="./tfrecords_train",
+        num_shards=10, num_threads=5, shuffle=False, store_images=True,
+        explicit_labels=set(), store_mimicked_structure_json=True,
+        mimicked_json_filepath=None, silent_on_extra_explicit_labels=False,
+        save_labels=True, labels_out_filepath=None,
     ):
     if mimicked_json_filepath is None:
         mimicked_json_filepath = os.path.join(
             output_directory, f"mimicked_structure-{dataset_name}.json"
+        )
+
+    if labels_out_filepath is None:
+        labels_out_filepath = os.path.join(
+            output_directory, f"labels.txt"
         )
 
     os.makedirs(output_directory, exist_ok=True)
@@ -32,7 +38,9 @@ def generate_tfrecords(
         explicit_labels=explicit_labels,
         silent_on_extra_explicit_labels=silent_on_extra_explicit_labels,
         store_mimicked_structure_json=store_mimicked_structure_json,
-        mimicked_json_filepath=mimicked_json_filepath
+        mimicked_json_filepath=mimicked_json_filepath,
+        save_labels=save_labels,
+        labels_out_filepath=labels_out_filepath,
     )
 
     failed_images = create(
